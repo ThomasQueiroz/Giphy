@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Resultados para {{ query }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Resultados para: "{{ query }}"</h2>
+
+    {% set real_gifs = gifs | selectattr("page", "ne", "#") | list %}
+    {% set gif_count = real_gifs | length %}
+
+    {% if gif_count == 0 %}
+        <div class="alert alert-warning text-center">
+            Nenhum GIF encontrado para "{{ query }}". Tente outra palavra.
+        </div>
+    {% elif gif_count == 1 %}
+        <div class="row justify-content-center">
+            <div class="col-10 col-md-6">
+                <div class="card card-custom h-100 shadow">
+                    <img src="{{ real_gifs[0].img }}" class="card-img-top img-fluid" alt="GIF do Giphy">
+                    <div class="card-footer text-center">
+                        <a href="https://wa.me/?text={{ real_gifs[0].page | urlencode }}"
+                           class="btn btn-success btn-sm share-btn" target="_blank">
+                            📤 Enviar via WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row g-4">
+            {% for gif in gifs %}
+            <div class="col-6 col-md-4">
+                <div class="card card-custom h-100 shadow">
+                    <img src="{{ gif.img }}" class="card-img-top img-fluid" alt="GIF do Giphy">
+                    <div class="card-footer text-center">
+                        <a href="https://wa.me/?text={{ gif.page | urlencode }}"
+                           class="btn btn-success btn-sm share-btn"
+                           target="_blank">
+                            📤 Enviar via WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="mt-5 text-center">
+        <a href="/" class="btn btn-lg btn-dark px-4 py-2 shadow">🔁 Buscar Novamente</a>
+    </div>
+</div>
+</body>
+</html>
